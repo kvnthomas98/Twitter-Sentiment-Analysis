@@ -1,16 +1,9 @@
-#Christian Caicedo | April 2014
-#christiancaicedo.com/myblog | Twitter: #@caicedoc1741
-#This file streams tweets from the Twitter API and saves them into a file 
-#It will create a file with thousands of positive and negative tweets  
-#The format is already set up, but you can modify it too.  
-
 import sys
 import tweepy
 import re 
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 
-#******Creating a dataset with POSITIVE Tweets*********** 
 
 class CustomStreamListener(tweepy.StreamListener):
     def __init__(self, maxnum, api=None):
@@ -23,40 +16,31 @@ class CustomStreamListener(tweepy.StreamListener):
             name = status.author.screen_name
             textTwitter = status.text
             
-            #Convert into lowercase
             Tweet = textTwitter.lower()
-            
-            #Convert www.* or https?://* to URL
             Tweet = re.sub('((www\.[\s]+)|(https?://[^\s]+))','URL',Tweet)
-            
-            #Convert @username to User
             Tweet = re.sub('@[^\s]+','TWITTER_USER',Tweet)
-            
-            #Remove additional white spaces
-            tweet = re.sub('[\s]+', ' ', Tweet)
+            Tweet = re.sub('[\s]+', ' ', Tweet)
             
             #Replace #word with word Handling hashtags
             Tweet = re.sub(r'#([^\s]+)', r'\1', Tweet)
             
             #trim
             Tweet = Tweet.strip('\'"')
-            
-            #Deleting happy and sad face emoticon from the tweet 
             a = ':)'
             b = ':('
             Tweet = Tweet.replace(a,'')
             Tweet = Tweet.replace(b,'')
-            
-            #Deleting the Twitter @username tag and reTweets
-            tag = 'TWITTER_USER' 
+            tag = 'TWITTER_USER'
             rt = 'rt'
             Tweet = Tweet.replace(tag,'')
             Tweet = Tweet.replace(rt,'')
             
             final_tweet = '|positive|, |%s| ' % (Tweet)
 
-            f = open('YourFileHereName', 'r+')
+            f = open('finalpositive.csv', 'a+')
             old = f.read()
+            f.seek(0,2)
+            print final_tweet
             f.write(final_tweet+'\n')
             f.close()
         
@@ -71,14 +55,10 @@ class CustomStreamListener(tweepy.StreamListener):
             print (e)
 
     def on_error(self, status_code):
-        #print >> sys.stderr, 'Encountered error with status code:', status_code
         return True # Don't kill the stream
 
     def on_timeout(self):
-        #print >> sys.stderr, 'Timeout...'
-        return True # Don't kill the stream
-        
-#******Creating a dataset with NEGATIVE Tweets*********** 
+        return True
 
 class CustomStreamListenerNEG(tweepy.StreamListener):
     def __init__(self, maxnum, api=None):
@@ -91,41 +71,34 @@ class CustomStreamListenerNEG(tweepy.StreamListener):
             name = status.author.screen_name
             textTwitter = status.text
             
-            #Convert into lowercase
             Tweet = textTwitter.lower()
             
-            #Convert www.* or https?://* to URL
             Tweet = re.sub('((www\.[\s]+)|(https?://[^\s]+))','URL',Tweet)
             
-            #Convert @username to TWITTER_USER
             Tweet = re.sub('@[^\s]+','TWITTER_USER',Tweet)
             
-            #Remove additional white spaces
-            tweet = re.sub('[\s]+', ' ', Tweet)
+            Tweet = re.sub('[\s]+', ' ', Tweet)
             
-            #Replace #word with word Handling hashtags
             Tweet = re.sub(r'#([^\s]+)', r'\1', Tweet)
             
-            #trim
             Tweet = Tweet.strip('\'"')
             
-            #Deleting happy and sad face emoticon from the tweet 
             a = ':)'
             b = ':('
             Tweet = Tweet.replace(a,'')
             Tweet = Tweet.replace(b,'')
                         
-            #Deleting the Twitter @username tag and reTweets
-            tag = 'TWITTER_USER' 
+            tag = 'TWITTER_USER'
             rt = 'rt'
             Tweet = Tweet.replace(tag,'')
             Tweet = Tweet.replace(rt,'')
             
             final_tweet = '|negative|, |%s| ' % (Tweet)
-            
-            f = open('YourFileHereName', 'r+')
+            print final_tweet
+            f = open('finalneg.csv', 'r+')
             old = f.read()
-            f.write(final_tweet+'\n')
+            f.seek(0, 2)
+            f.write(final_tweet + '\n')
             f.close()
         
             self.n = self.n+1
@@ -139,11 +112,9 @@ class CustomStreamListenerNEG(tweepy.StreamListener):
             print (e)
 
     def on_error(self, status_code):
-        #print >> sys.stderr, 'Encountered error with status code:', status_code
         return True # Don't kill the stream
 
     def on_timeout(self):
-        #print >> sys.stderr, 'Timeout...'
         return True # Don't kill the stream
 
 #initialize stopWords
@@ -192,14 +163,12 @@ def getFeatureVector(tweet):
         else:
             featureVector.append(w.lower())
     return featureVector
-#end
 
-# Here I am obtaining the negative tweets -
 def main():
-    consumer_key="nFu2HqrelkEiax0L5Lh4Sw"
-    consumer_secret="6OUaIfj0ECfeJD24CVlDrcc1qqajnHBgsB7b6RPmvA"
-    access_token="1193875656-G3iatRJ18tCCFTf8x06kV5B6XwdWbja4S4DVXDL"
-    access_token_secret="IGOxuEQYeTREpGkL4F5LkdYNxUPLFo0zBjX3Yfdg8g"
+    consumer_key="****"
+    consumer_secret="****"
+    access_token="****"
+    access_token_secret="****"
 
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
@@ -212,18 +181,16 @@ def main():
     
     sapi.filter(None, setTerms, languages=["en"])
     
-# Here I obtain the negative tweets - I also do some cleaning of the tweet in the function before save it in the file 
 def mainNEG():
-    consumer_key="nFu2HqrelkEiax0L5Lh4Sw"
-    consumer_secret="6OUaIfj0ECfeJD24CVlDrcc1qqajnHBgsB7b6RPmvA"
-    access_token="1193875656-G3iatRJ18tCCFTf8x06kV5B6XwdWbja4S4DVXDL"
-    access_token_secret="IGOxuEQYeTREpGkL4F5LkdYNxUPLFo0zBjX3Yfdg8g"
+    consumer_key = 'TVeJNu6TEiURi2UAVMYIXs9Dp'
+    consumer_secret = 'uTkfTzT2k9gB33XYJPBCmgFqaGcBzjzrS0wZUbaxve7H8o4ec4'
+    access_token = '877381454-Mo0egDzpYMvnizoWkYZcRYeqdogA88MY9uwNbG6Z'
+    access_token_secret = 'P06bOHjI02MKybb2enEqKZRqEnsFnuH69sGOeDgnHIuJn'
 
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
     api = tweepy.API(auth) 
-    
-    #Calling the Function for the dataset with the Negative tweets
+
     NegTweets = tweepy.streaming.Stream(auth, CustomStreamListenerNEG(maxnum=0))
     setTermsNEG = [':(']
     
@@ -231,7 +198,7 @@ def mainNEG():
      
     
 def Positive():
-    fp = open('YourFileHereName', 'r')
+    fp = open('finalneg', 'r')
     line = fp.readline()
     
     st = open('StopWords.txt', 'r')
@@ -239,19 +206,10 @@ def Positive():
     
     while line:
         featureVector = getFeatureVector(line)
-        #print featureVector
-        line = fp.readline()         
+        line = fp.readline()
     
 if __name__ == '__main__':
-    try:
-        main()
-        mainNEG()
-        Positive()
-        
-    except KeyboardInterrupt:
-        print "Disconnecting from Twitter... ",
-        print "Done"        
-        
-        
-        
-        
+    main()
+    mainNEG()
+    Positive()
+
