@@ -43,10 +43,12 @@ TRAINING THE CLASSIFIER
 
                                              ***Running the program***
                                              
-- First, save the three files (StreamingTwitter.py, StopWords.txt, and NaiveBayes.py) in the same folder.
-- Second, execute the file StreamingTwitter.py, which will create your dataset.
-- Third, execute NaiveBayes.py, which will run the classifier and ask you to enter a sentence (simulating a tweet)
-- Finally, you will see if your sentence has a positive or negative feeling.
+-First execute StreamingTwitter.py after getting the neccessary credentials from the Twitter Developer Apps you have created
+-The script will execute forever, so when you want to obtain positive tweets just comment out the negative tweet call and vice versa
+-then after obtaining the training data, in the setTerms variable update the query to enter the name of some entity to check its popularity and compare, here I have used Dhoni and Kohli and then run the script and save them in an appropriate named csv file.
+-Combine positive and negative data into one large file, ideally the final training dataset should have 50% positive tweets and 50% negative tweets
+-Then run NaiveClassifier.py to check the popularity
+-Finally run importantfeatures.py to identify the most important positive and negative features present in the script
 
 NOTE: In some cases when you test a positive sentence (i.e. I am happy), and it shows you that is a negative sentence, this is essentially because in the training data didn't cover the words encountered in this tweet. So, the classifier has little knowledge to classify this tweet and most often the tweet gets assigned the default classification label. Therefore, training dataset is very crucial for the success of these classifiers. Anything below 100k of training tweets will give you poor results.
                                              
